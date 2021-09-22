@@ -1,0 +1,64 @@
+*{
+    font-family: sans-serif;
+    
+}
+
+
+/*Estilos do onload
+#nome{
+    display: none;
+}
+
+#csenha{
+    display: none;
+}
+
+#enviar{
+    display: none;
+}*/
+
+
+/*Estilos da sessão "Usuarios Cadastrados"*/
+.users{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    
+}
+.users{
+    margin-top: 20px;
+}
+.letra{
+    font-family:monospace;
+    display: inline;
+    font-size: 30px;
+    background-color: black;
+    color: white;
+    padding: 6px 15px;
+    border-radius: 100%;
+}
+.b{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.nome, .email{
+    margin-left: 5px;
+}
+
+.users>button{
+    margin-left: 5px;
+    background-color: black;
+    color: white;
+    border-style: none;
+    padding: 8px;
+    border-radius: 20px;
+}
+
+.users>.del{
+    background-color: red;
+}
+
+.indice{
+    color: white;
+}

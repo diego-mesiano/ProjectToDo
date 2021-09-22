@@ -2,6 +2,10 @@
 Projeto com objetivo principal de praticar Local Storage e Integração de API. 
 A idéia é criar uma pagina web onde a pessoa pode criar e editar tarefas a fazer. 
 
+Wireframe Login: https://wireframe.cc/dDl9xV
+
+
+
 Instruções e requisitos
 
 1. A primeira página deve ter um formulário com os inputs:

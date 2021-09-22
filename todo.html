@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To.Do - Nome do Usuário</title>
+    <script>
+        document.title = `To.Do - ${localStorage.getItem("@NOME")}`
+        //apagar session storage
+        function apagar(){
+        localStorage.removeItem("@NOME");
+        localStorage.removeItem("@EMAIL");
+        localStorage.removeItem("@CADASTRADOS");
+        localStorage.removeItem("@MANTER");
+        sessionStorage.removeItem("@LOGADO");
+        window.location.href = "./"
+        }
+        function encerraSessao(){
+            sessionStorage.setItem("@LOGADO","0");
+            window.location.href = "./"
+        }
+    </script>
+</head>
+<body>
+    <button id="apagar" onclick="apagar();">Apagar session storage</button>
+    <button id="encerrarSessao" onclick="encerraSessao();">Encerrar Sessão</button>
+</body>
+</html>
