@@ -50,6 +50,13 @@ let mostrarUsuarios = () => {
     }
 }
 
+let mostrarLogin = () =>{
+    document.getElementById("nome").style.display="none";
+    document.getElementById("csenha").style.display="none";
+    document.getElementById("enviar").style.display="none";
+    document.getElementById("login").style.display="initial";
+}
+
 //variavel que armazena qual indice sera manipulado da lista de usuarios cadastrados ao clicar nos botoes
 let clique = [];
 
@@ -104,13 +111,24 @@ window.onload = () => {
     //mostra os usuarios cadastrados
     mostrarUsuarios();
 
+    //evento de clique no link login
+    let login = document.getElementById("lnkLogin");
+    login.addEventListener("click",(clique)=>{
+        clique.preventDefault();
+        mostrarLogin();
+    })
 
+    //evento de clique no link Cadastre-se
+    let c = document.getElementById("lnkCadastrar");
+    c.addEventListener("click",(clique)=>{
+        window.location.reload();
+    })
 
     //evento de clique do botao enviar
     enviar.addEventListener("click", (event) => {
         //previne o default
         event.preventDefault();
-
+    
         //- ao preencher o email deve verificar se o usuario ja tem cadastro e sumir com os campos de nome e confirmação de senha.
 
         //- validar os campos
