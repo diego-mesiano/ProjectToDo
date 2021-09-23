@@ -49,12 +49,12 @@ let mostrarUsuarios = () => {
         }
     }
 }
-
-let mostrarLogin = () =>{
-    document.getElementById("nome").style.display="none";
-    document.getElementById("csenha").style.display="none";
-    document.getElementById("enviar").style.display="none";
-    document.getElementById("login").style.display="initial";
+//função responsavel por mostrar os imputs certos ao clicar em login
+let mostrarLogin = () => {
+    document.getElementById("nome").style.display = "none";
+    document.getElementById("csenha").style.display = "none";
+    document.getElementById("enviar").style.display = "none";
+    document.getElementById("login").style.display = "initial";
 }
 
 //variavel que armazena qual indice sera manipulado da lista de usuarios cadastrados ao clicar nos botoes
@@ -104,7 +104,7 @@ window.onload = () => {
 
     /* verificar se o logado é sim e
     abre a proxima pagina, se nao nem entra aqui*/
-    if (sessionStorage.getItem("@LOGADO") == 1) {
+    if (sessionStorage.getItem("@LOGADO") == 1 ||localStorage.getItem("@MANTER") == 1) {
         window.location.href = "./todo.html"
     }
 
@@ -113,50 +113,68 @@ window.onload = () => {
 
     //evento de clique no link login
     let login = document.getElementById("lnkLogin");
-    login.addEventListener("click",(clique)=>{
+    login.addEventListener("click", (clique) => {
         clique.preventDefault();
         mostrarLogin();
     })
 
     //evento de clique no link Cadastre-se
     let c = document.getElementById("lnkCadastrar");
-    c.addEventListener("click",(clique)=>{
+    c.addEventListener("click", (clique) => {
         window.location.reload();
     })
 
-    //evento de clique do botao enviar
+    //evento de clique do botao Criar conta
     enviar.addEventListener("click", (event) => {
         //previne o default
         event.preventDefault();
-    
-        //- ao preencher o email deve verificar se o usuario ja tem cadastro e sumir com os campos de nome e confirmação de senha.
-
         //- validar os campos
+        if (pass.value != passC.value) {
+            alert("Senhas não conferem!");
+            pass.value = "";
+            passC.value = "";
+            pass.focus();
 
-
-
-        //armazenar os dados na session storage 
-        localStorage.setItem("@NOME", nome.value);
-        localStorage.setItem("@EMAIL", email.value);
-        sessionStorage.setItem("@LOGADO", 1);
-        cadastradosStr = localStorage.getItem("@CADASTRADOS");
-        cadastradosJSON = JSON.parse(cadastradosStr);
-        if (document.getElementById("manter").checked) {
-            localStorage.setItem("@MANTER", 1);
-            zerarArray(cadastradosJSON.mantido);
-            cadastradosJSON.mantido.push(1);
+        } else if (pass.value.length < 6) {
+            alert("Senhas devem ter no minimo 6 caracteres!")
+            passC.value = "";
+            pass.focus();
+        } else if (nome.value == "" || nome.value.length < 2) {
+            alert("Digite um nome válido, deve ser maior que 2 caracteres");
+            nome.focus();
+        } else if (email.value == "" || email.value.length < 5) {
+            alert("Digite um e-mail válido, deve ser maior que 5 caracteres");
+            email.focus();
         } else {
-            cadastradosJSON.mantido.push(0);
+            //aqui ja esta tudo validado
+            //retirando os espaços no inicio e no final antes de aramzenar no local Storage
+            nome.value = nome.value.trim();
+            email.value = email.value.trim();
+            //armazenar os dados na session storage 
+            localStorage.setItem("@NOME", nome.value);
+            localStorage.setItem("@EMAIL", email.value);
+            sessionStorage.setItem("@LOGADO", 1);
+            cadastradosStr = localStorage.getItem("@CADASTRADOS");
+            cadastradosJSON = JSON.parse(cadastradosStr);
+            if (document.getElementById("manter").checked) {
+                localStorage.setItem("@MANTER", 1);
+                zerarArray(cadastradosJSON.mantido);
+                cadastradosJSON.mantido.push(1);
+            } else {
+                cadastradosJSON.mantido.push(0);
+            }
+            cadastradosJSON.nome.push(nome.value);
+            cadastradosJSON.email.push(email.value);
+            cadastradosJSON.senha.push(senha.value);
+            zerarArray(cadastradosJSON.logado);
+            cadastradosJSON.logado.push(1);
+
+            cadastradosStr = JSON.stringify(cadastradosJSON);
+            localStorage.setItem("@CADASTRADOS", cadastradosStr);
+
+            //- mostrar a proxima pagina
+            window.location.reload();
         }
-        cadastradosJSON.nome.push(nome.value);
-        cadastradosJSON.email.push(email.value);
-        cadastradosJSON.senha.push(senha.value);
-        zerarArray(cadastradosJSON.logado);
-        cadastradosJSON.logado.push(1);
-
-        cadastradosStr = JSON.stringify(cadastradosJSON);
-        localStorage.setItem("@CADASTRADOS", cadastradosStr);
-        window.location.reload();
 
 
 
@@ -164,7 +182,12 @@ window.onload = () => {
 
 
 
-        //- mostrar a proxima pagina
+
+
+
+
+
+
 
     })
 }
