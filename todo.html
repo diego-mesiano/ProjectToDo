@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>To.Do - Nome do Usuário</title>
+    <title>To.Do</title>
     <script>
         document.title = `To.Do - ${localStorage.getItem("@NOME")}`
         //apagar session storage
@@ -18,7 +18,9 @@
         }
         function encerraSessao(){
             sessionStorage.setItem("@LOGADO",0);
-            localStorage.setItem("@MANTER",0)
+            localStorage.setItem("@MANTER",0);
+            localStorage.setItem("@NOME","");
+            localStorage.setItem("@EMAIL","");
             window.location.href = "./"
         }
     </script>

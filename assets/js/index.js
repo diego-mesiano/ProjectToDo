@@ -1,16 +1,15 @@
-//função que cria uma tela preta no fundo e na frente de tudo
-function telaPreta() {
-    //necessario setar no css *{z-index: 1;} 
-    let div = document.createElement("div");
-    document.body.appendChild(div);
-    //div.style.zIndex = 100;
-    document.querySelector("main").style.display = "none";
-    div.style.minHeight = "100vh";
-    div.style.minWidth = "100%";
-    div.style.backgroundColor = "black";
-    // div.style.display = "absolut";
-    //div.style.top = "0";
+//Função para baixar o session storage e trazer para as variaveis do JS
+export function baixarStorage() {
+    cadastradosStr = localStorage.getItem("@CADASTRADOS");
+    cadastradosJSON = JSON.parse(cadastradosStr);
 }
+
+//Função para subir as variaveis para o session storage
+function subirStorage() {
+    cadastradosStr = JSON.stringify(cadastradosJSON);
+    localStorage.setItem("@CADASTRADOS", cadastradosStr);
+}
+
 //função para setar todos os elementos do array para 0
 let zerarArray = (arr) => {
     for (let i = 0; i < arr.length; i++) {
@@ -19,48 +18,50 @@ let zerarArray = (arr) => {
     }
 }
 
-//função para mostrar usuarios cadastrados
+//função para mostrar usuarios cadastrados no sistema
 let mostrarUsuarios = () => {
     let padrao = document.getElementById("padrao");
 
     cadastradosStr = localStorage.getItem("@CADASTRADOS");
     cadastradosJSON = JSON.parse(cadastradosStr);
 
-
-
     if (cadastradosJSON.logado.length == 0) {
-        padrao.innerHTML = "Ainda não há usuarios Cadastrados"
+        //se não tem usuarios cadastrados
+        padrao.innerHTML = "Não há usuarios Cadastrados"
     } else {
+        //se encontrou usarios cadastrados
         padrao.innerHTML = "";
         for (let i = 0; i < cadastradosJSON.logado.length; i++) {
             padrao.innerHTML += `
-                <div class="users" id="users${i}">
-                    <div class="a">
+            <div class="users" id="users${i}">
+                <div class="a">
+                    <a href="#" class= "inicial" id="inicial${i}" onclick="clique=[${i},'l']; acoes(${i});">
                         <strong class="letra">${cadastradosJSON.nome[i][0].toUpperCase()}</strong><br>
-                    </div>
-                    <div class="b">
+                    </a>
+                </div>
+                <div class="b">
+                    <div class="c">
                         <strong class="nome">${cadastradosJSON.nome[i]}</strong>
-                        <strong class="email">${cadastradosJSON.email[i]}</strong>
+                        <button class="log" id="log${i}" onclick="clique=[${i},'l']; acoes(${i});">Logar</button>
+                        <button class="del" id="del${i}" onclick="clique=[${i},'d']; acoes(${i});">Apagar</button>
                     </div>
-                    <button class="log" id="log${i}" onclick="clique=[${i},'l']; acoes(${i});">Logar</button>
-                    <button class="del" id="del${i}" onclick="clique=[${i},'d']; acoes(${i});">Apagar</button>
-                    
+                    <strong class="email">${cadastradosJSON.email[i]}</strong>
                 </div>`
         }
     }
 }
-//função responsavel por mostrar os imputs certos ao clicar em login
-let mostrarLogin = () => {
+//função responsavel por mostrar apenas os imputs de login
+function mostrarLogin(){
     document.getElementById("nome").style.display = "none";
     document.getElementById("csenha").style.display = "none";
     document.getElementById("enviar").style.display = "none";
     document.getElementById("login").style.display = "initial";
 }
 
-//variavel que armazena qual indice sera manipulado da lista de usuarios cadastrados ao clicar nos botoes
+//variavel que armazena qual indice sera manipulado da lista de usuarios cadastrados ao clicar nos botoes excluir ou logar
 let clique = [];
 
-
+//variavel para armazenzar o Local Storage em formado js
 export let cadastradosJSON = {
     nome: [],
     email: [],
@@ -68,10 +69,11 @@ export let cadastradosJSON = {
     logado: [],
     mantido: []
 }
+//variavel para armazenzar o Local Storage puro (stringficado)
 export let cadastradosStr = "";
 
 //Ao carregar a pagina:
-window.onload = () => {
+window.onload = function(){
 
     //variaveis dos inputs
     let nome = document.getElementById("nome");
@@ -86,27 +88,21 @@ window.onload = () => {
         !sessionStorage.getItem("@LOGADO") &&
         !localStorage.getItem("@CADASTRADOS") &&
         !localStorage.getItem("@MANTER")) {
-        /*Se não:
-        - criar variaveis no local storage:
-        -nome
-        -email
-        *essas variaveis serão as variaveis que receberam o login da sessao
-        -logado: (padrao:0) 1 sim 0 nao *CASO MANTER LOGIN SEJA ACIONADO
-        -UsuariosCadastrados: {nome[],email[],senha[],logado:false}*/
-        console.log("As variaveis locais não foram encontradas e foram criadas!");
-        localStorage.setItem("@NOME", "");
-        localStorage.setItem("@EMAIL", "");
-        sessionStorage.setItem("@LOGADO", 0);
-        localStorage.setItem("@MANTER", 0);
-        localStorage.setItem("@CADASTRADOS", JSON.stringify(cadastradosJSON));
+            console.log("As variaveis locais não foram encontradas e foram criadas!");
+            localStorage.setItem("@NOME", "");
+            localStorage.setItem("@EMAIL", "");
+            sessionStorage.setItem("@LOGADO", 0);
+            localStorage.setItem("@MANTER", 0);
+            localStorage.setItem("@CADASTRADOS", JSON.stringify(cadastradosJSON));
     }
 
 
-    /* verificar se o logado é sim e
-    abre a proxima pagina, se nao nem entra aqui*/
-    if (sessionStorage.getItem("@LOGADO") == 1 ||localStorage.getItem("@MANTER") == 1) {
+    //verifica se o usuário esta logado na sessão ou se o usuario manteve a sessão
+    if (sessionStorage.getItem("@LOGADO") == 1 || localStorage.getItem("@MANTER") == 1) {
         window.location.href = "./todo.html"
     }
+
+    //se o usuario não esta logado ou mantido continua abaixo
 
     //mostra os usuarios cadastrados
     mostrarUsuarios();
@@ -126,10 +122,23 @@ window.onload = () => {
 
     //evento de clique do botao Criar conta
     enviar.addEventListener("click", (event) => {
-        //previne o default
         event.preventDefault();
-        //- validar os campos
-        if (pass.value != passC.value) {
+        baixarStorage();
+        //verifica se esse email ja foi cadastrado
+        function verificarEmailIgual(){
+            for(let i = 0;i<cadastradosJSON.email.length;i++){
+                if (cadastradosJSON.email[i]==email.value)
+                    return true;
+                else
+                    return false;
+            }
+        }
+        //- valida os campos
+        if(verificarEmailIgual()){
+            alert("Usuario já cadastrado, que tal fazer login?");
+            mostrarLogin();
+            senha.focus();
+        }else if (pass.value != passC.value) {
             alert("Senhas não conferem!");
             pass.value = "";
             passC.value = "";
@@ -145,7 +154,8 @@ window.onload = () => {
         } else if (email.value == "" || email.value.length < 5) {
             alert("Digite um e-mail válido, deve ser maior que 5 caracteres");
             email.focus();
-        } else {
+        }
+        else{
             //aqui ja esta tudo validado
             //retirando os espaços no inicio e no final antes de aramzenar no local Storage
             nome.value = nome.value.trim();
@@ -156,6 +166,7 @@ window.onload = () => {
             sessionStorage.setItem("@LOGADO", 1);
             cadastradosStr = localStorage.getItem("@CADASTRADOS");
             cadastradosJSON = JSON.parse(cadastradosStr);
+            //checa se o checkbox manter sessão foi checado
             if (document.getElementById("manter").checked) {
                 localStorage.setItem("@MANTER", 1);
                 zerarArray(cadastradosJSON.mantido);
@@ -163,33 +174,64 @@ window.onload = () => {
             } else {
                 cadastradosJSON.mantido.push(0);
             }
+
+            //adiciona o usuário na array js
             cadastradosJSON.nome.push(nome.value);
             cadastradosJSON.email.push(email.value);
             cadastradosJSON.senha.push(senha.value);
             zerarArray(cadastradosJSON.logado);
             cadastradosJSON.logado.push(1);
 
-            cadastradosStr = JSON.stringify(cadastradosJSON);
-            localStorage.setItem("@CADASTRADOS", cadastradosStr);
+            subirStorage();
 
             //- mostrar a proxima pagina
             window.location.reload();
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     })
+
+    //Evento do clique do botão de login
+    document.getElementById("login").addEventListener("click", function (logou) {
+        logou.preventDefault();
+        baixarStorage();
+        console.log(cadastradosJSON)
+        //verifica se encontra o email cadastrado
+        var e = "";
+        for (let i = 0; i < cadastradosJSON.email.length; i++) {
+            if (cadastradosJSON.email[i] == email.value) {
+                //se encontrar armazena os dados que serao usados
+                e = cadastradosJSON.email[i];
+                var s = cadastradosJSON.senha[i];
+                var p = i;
+
+            }
+        }
+        if (e == "") {
+            //verifica se o email foi encontrado
+            alert('Email não encontrado, que tal se cadastrar?');
+            email.focus();
+        } else if (cadastradosJSON.senha[p] != senha.value) {
+            //verifica se as senhas batem
+            alert('Senha inválida');
+            senha.value = "";
+            senha.focus();
+        } else {
+            //se entrou aqui é porque a senha e o usuario estao corretos
+            //armazenar os dados no storage 
+            localStorage.setItem("@NOME", cadastradosJSON.nome[p]);
+            localStorage.setItem("@EMAIL", cadastradosJSON.email[p]);
+            sessionStorage.setItem("@LOGADO", 1);
+            //verifica se o botao manter sessao foi checado
+            if (document.getElementById("manter").checked) {
+                localStorage.setItem("@MANTER", 1);
+                zerarArray(cadastradosJSON.mantido);
+                cadastradosJSON.mantido.push(1);
+            } else {
+                cadastradosJSON.mantido.push(0);
+            }
+            window.location.reload();
+        }
+    })
+
 }
 
 

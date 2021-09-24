@@ -11,37 +11,70 @@
     <script>
         //função responsavel por ações dos botões de Usuários Cadastrados
         function acoes(n) {
+            //armazena os imputs
             let Anome = document.getElementById("nome")
             let Aemail = document.getElementById("email");
             let Asenha = document.getElementById("senha");
             let Acsenha = document.getElementById("csenha");
             let btnEnviar = document.getElementById("enviar");
             let btnLogin = document.getElementById("login");
+            //baixa o storage stringficado e converte pra js
             cadastradosStr = localStorage.getItem("@CADASTRADOS");
             cadastradosJSON = JSON.parse(cadastradosStr);
+            // se usuario clicou em logar
             if (clique[1] == 'l') {
+                //coloca o email no input
                 Aemail.value = cadastradosJSON.email[n];
+                //da o foco nele
                 Asenha.focus();
+                //mostra somente os imputs e botoes necessarios para fazer login
+                document.querySelector("h3").innerHTML="Faça <a href=\"#\" id=\"lnkLogin\">Login</a><br> ou <a href=\"#\" id=\"lnkCadastrar\">Cadastre-se</a>"                
                 Anome.style.display = "none";
                 Acsenha.style.display = "none";
                 btnEnviar.style.display = "none";
                 btnLogin.style.display = "initial";
+                Aemail.style.display ="initial";
             }
 
+            //se o clique for no botão de apagar
             if (clique[1] == 'd') {
-                //telaPreta();
-                let confirma = window.confirm('Deseja realmente excluir ' + cadastradosJSON.nome[n] + '? Todos os To.Do\'s serão perdidos!');
-                if (confirma == true) {
-                    cadastradosJSON.nome.splice(n, 1);
-                    cadastradosJSON.email.splice(n, 1);
-                    cadastradosJSON.senha.splice(n, 1);
-                    cadastradosJSON.logado.splice(n, 1);
-                    cadastradosStr = JSON.stringify(cadastradosJSON);
-                    localStorage.setItem("@CADASTRADOS", cadastradosStr);
-                    localStorage.setItem("@NOME", "");
-                    localStorage.setItem("@EMAIL", "");
-                    sessionStorage.setItem("@LOGADO", "");
-                    window.location.reload();
+                //Mostra somente os inputs de login
+                document.getElementById("nome").style.display = "none";
+                document.getElementById("csenha").style.display = "none";
+                document.getElementById("enviar").style.display = "none";
+                document.getElementById("login").style.display = "none";
+                document.getElementById("email").style.display = "none"; 
+                document.getElementById("manter").style.display = "none";
+                document.querySelector("label").style.display = "none";
+                document.querySelector("h3").innerHTML="<p style=\"color\:red\">Digite a senha de "+cadastradosJSON.nome[n]+" para apagar:</p>"
+                //checa se a senha confere
+                if (cadastradosJSON.senha[n] == senha.value) {
+                    //pede uma confirmação do usuario
+                    let confirma = window.confirm('Deseja realmente excluir ' + cadastradosJSON.nome[n] + '? Todos os To.Do\'s serão perdidos!');
+                    //se usuario confirmar a exclusao
+                    if (confirma == true) {
+                        //exlui de acordo com o indice
+                        cadastradosJSON.nome.splice(n, 1);
+                        cadastradosJSON.email.splice(n, 1);
+                        cadastradosJSON.senha.splice(n, 1);
+                        cadastradosJSON.logado.splice(n, 1);
+                        //sobe a storage atualizada
+                        cadastradosStr = JSON.stringify(cadastradosJSON);
+                        localStorage.setItem("@CADASTRADOS", cadastradosStr);
+                        localStorage.setItem("@NOME", "");
+                        localStorage.setItem("@EMAIL", "");
+                        sessionStorage.setItem("@LOGADO", "");
+                        window.location.reload();
+                    }else{
+                        window.location.reload();
+                    }
+                }else if(senha.value==""){
+                    alert("Digite a senha!");
+                    senha.focus();
+                }else{
+                    alert("Senha não confere!")
+                    senha.value="";
+                    senha.focus();
                 }
             }
         }
@@ -53,10 +86,8 @@
         <h1>To.Do</h1>
     </header>
     <main>
-
         <form action="" class="formLogin">
-            <h4>Bem Vindo</h4>
-            <h3>Faça <a href="#" id="lnkLogin">Login</a> ou <a href="#" id="lnkCadastrar">Cadastre-se</a> para utilizar o serviço</h3>
+            <h3>Faça <a href="#" id="lnkLogin">Login</a><br> ou <a href="#" id="lnkCadastrar">Cadastre-se</a> </h3>
             <input type="text" name="nome" id="nome" placeholder="Insira seu nome">
             <input type="email" name="email" id="email" placeholder="Insira seu e-mail">
             <input type="password" name="senha" id="senha" placeholder="Insira sua senha">
@@ -64,20 +95,21 @@
 
             <button type="button" id="enviar">Criar Conta</button>
             <button type="button" id="login">Login</button>
-            <input type="checkbox" name="manter" id="manter">
-            <label for="manter">Manter Sessao</label>
-
+            <div class="divManter">
+                <input type="checkbox" name="manter" id="manter">
+                <label for="manter">Manter Sessao</label>
+            </div>    
         </form>
 
         <div id="logados" class="logados">
 
             <h2>Usuários Cadastrados</h2>
-            <p id="padrao">Ainda não há usuarios Cadastrados</p>
+            <p id="padrao">Não há usuarios Cadastrados</p>
 
         </div>
     </main>
     <footer>
-
+        <h3>Desenvolvido com &#10084;</h3>
     </footer>
     <script src="./assets/js/index.js" type="module"></script>
 </body>
